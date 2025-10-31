@@ -1,3 +1,14 @@
+Create the KVM host for baremetal
+```bash
+sudo qemu-img create -f qcow2 /home/karan/nvme2/sno02.qcow2 200G
+export HUB_CLUSTER_NAME="hubztp"
+export CLUSTER_NAME="sno01"
+export UUID="deed1e55-fe11-f0e5-0dd5-babb1ed1a010"
+export MAC="00:00:00:00:00:14"
+```
+```bash
+sudo virt-install   --name=${HUB_CLUSTER_NAME}-${CLUSTER_NAME}   --uuid=${UUID}   --ram=65536   --vcpus=16   --cpu host-passthrough   --os-type linux   --os-variant rhel8.0   --noreboot   --events on_reboot=restart   --noautoconsole   --boot hd,cdrom   --import   --disk path=/home/karan/nvme2/sno02.qcow2,size=200   --network  network=default,mac=00:00:00:00:00:14,model=virtio
+```
 ```bash
 oc create ns ai-sno-cluster001
 oc create secret generic ai-bmh-secret \
@@ -66,7 +77,7 @@ spec:
                 next-hop-interface: ens1s0
                 table-id: 254 
         interfaces:
-          - macAddress: '00:00:00:00:00:10'
+          - macAddress: '00:00:00:00:00:14'
             name: ens1s0
       bmcCredentialsName:
         name: ai-bmh-secret
@@ -74,7 +85,7 @@ spec:
       hostName: abc 
       bootMode: UEFI
       role: master
-      bootMACAddress: '00:00:00:00:00:10'
+      bootMACAddress: '00:00:00:00:00:14'
       templateRefs:
         - name: ai-node-templates-v1
           namespace: open-cluster-management
