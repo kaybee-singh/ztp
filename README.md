@@ -6,6 +6,27 @@ oc create secret generic ai-bmh-secret \
   --from-literal=password="redhat"
   oc create secret generic pull-secret   -n ai-sno-cluster001   --from-file=.dockerconfigjson=./pull-secret   --type=kubernetes.io/dockerconfigjson
 ```
+add agentconfig
+```bash
+cat agent-service.config 
+apiVersion: agent-install.openshift.io/v1beta1
+kind: AgentServiceConfig
+metadata:
+  name: agent
+spec:
+  databaseStorage:
+    storageClassName: nfs-client   # your new SC
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 10Gi
+  filesystemStorage:
+    storageClassName: nfs-client
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 20Gi
+```
 Configure 
 ```bash
 apiVersion: siteconfig.open-cluster-management.io/v1alpha1
